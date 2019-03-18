@@ -114,17 +114,20 @@ function removeFilter(){
 function getRiskData(filteredCords) {
   var riskDataObj = {},minMax = {};
   for (let i = 0; i < filteredCords.length; i++) {
-    let allVal =[];
+    let allVal =[],category = [], data=[];
     const element = filteredCords[i];
     var key = element.reference;
     riskDataObj[key] = [];
     for(let value in element){
       if(value != "reference" && value!="latitude" && value != "longitude"){
-          allVal.push(element[value])
-          var jsonObj = {"label":value,"value":element[value]};
-          riskDataObj[key].push(jsonObj);
+          let riskPercentage = (element[value]/1)*100;
+          allVal.push(riskPercentage)
+          category.push({"label":value});
+          data.push({"value":riskPercentage});
       }
     }
+    var jsonObj = {"category":category,"data":data};
+    riskDataObj[key].push(jsonObj)
     let min = Math.min(...allVal);
     let max = Math.max(...allVal);
     let avg = (min+max)/2;
@@ -182,13 +185,18 @@ function openModal(riskData,minMax,title) {
     }
   }
 }
-function renderChart(title,data,min,max,avg){
+function renderChart(title,riskData,min,max,avg){
+  console.log(riskData,title,min,max,avg,"renderData")
   var dataSrc = {
     "caption": "Risk data for "+ title,
     "xAxisName": title,
     "yAxisName": "Risk probability",
-    "yAxisMinvalue": min,
-    "yAxisMaxvalue": max,
+    "numberSuffix": "%",
+    //"exportEnabled":"1",
+    "decimals":"8",
+    "yAxisMinvalue":min,
+    "yAxisMaxvalue":max,
+    "plotToolText": "timestamp: $label <br> Risk: $dataValue",
     "theme": "fusion",
 };
   if(min === max){
@@ -200,15 +208,21 @@ function renderChart(title,data,min,max,avg){
     dataSrc.yAxisMaxvalue = max;
   }
   var chartInstance = new FusionCharts({
-    type: 'bar2d',
+    type: 'scrollcolumn2d',
     width: "100%", // Width of the chart
     height: "100%", // Height of the chart
     dataFormat: 'json', // Data type
     renderAt:'chart-container', //container where the chart will render
     dataSource: {
         "chart": dataSrc,
+        "categories": [
+          {
+            "category": riskData[0].category,
+          }],
         // Chart Data
-        "data": data
+        "dataset": [{
+          "data": riskData[0].data
+        }]
     }
 });
 // Render
