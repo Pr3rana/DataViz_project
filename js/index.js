@@ -224,6 +224,13 @@ function renderChart(title,riskData,min,max,avg){
     "plotToolText": "timestamp: $label <br> Risk: $dataValue",
     "theme": "fusion",
 };
+  if (min == max) {
+    dataSrc.yAxisMinvalue = min - avg;
+    dataSrc.yAxisMaxvalue = max + avg;
+  } else {
+    dataSrc.yAxisMinvalue = newMin;
+    dataSrc.yAxisMaxvalue = max;
+  }
   var chartInstance = new FusionCharts({
     type: 'scrollcolumn2d',
     width: "100%", // Width of the chart
