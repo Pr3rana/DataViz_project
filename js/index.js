@@ -178,7 +178,7 @@ function getRiskData(filteredCords) {
   return [riskDataObj, minMax];
 }
 //get normalize data
-function  getNormalizeVal(allVal,category,data) {
+function getNormalizeVal(allVal,category,data) {
   let min = Math.min(...allVal),
       max = Math.max(...allVal),
       allNormVal = [],
