@@ -4,13 +4,12 @@
 }
 #check{
     float: right;
-    overflow-y: scroll;
     /* position: fixed; */
     background: white;
     margin-top: 2px;
 }
 .checkbox{
-    background-color: #fafafa;
+  background-color: #fafafa;
 	border: 1px solid #cacece;
 	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05);
 	border-radius: 3px;
@@ -23,8 +22,8 @@
 }
 #actionButton{
     position: fixed;
-    bottom: 0;
-    right: 0;
+    bottom: .3rem;
+    right: 1rem;
     z-index: 5;
 }
 
@@ -33,10 +32,9 @@
     display: none;
     width: 70%;
     height: 70vh !important;
-    margin:0 auto;
     position: absolute;
-    left: -20%;
-    right:0;
+    left: 2rem;
+    right: 2.5rem;
     top: 50%; 
     border:1px solid;
     -webkit-transform:translateY(-50%);
@@ -68,8 +66,10 @@
   
   /* The Close Button */
   #close {
-    color: #333;
-    font-size: 28px;
+    color: #111c75;
+    margin-top: 0.7rem;
+    margin-left: 0.5rem;
+    font-size: 1rem;
     font-weight: bold;
   }
   
@@ -83,7 +83,7 @@
   .modal-header {
     height: 10%;
     padding: 2px 2px;
-    background-color: #000000;
+    background-color:#1A86B1;
     color: white;
   }
 

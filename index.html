@@ -18,27 +18,29 @@
 <body>
     <main class="container-fluid">
         <div class="row content">
-            <div class="col-sm-12" style="height:10vh; background-color: black;">
+            <div class="col-sm-12" style="height:10vh; background-color: #00418E">
                 <h2 class = "text-lg-left" style="margin-top: 1.2rem; color: #ffffff;">Tagup Data Visualization Expert Challenge</h2>
             </div>
-            <div id="map_canvas" class="col-sm-9" style="height:90vh; overflow-x:scroll; background-color: #f5f5f5;"></div>
-            <div id="check" class="col-sm-3 sidenav" style="height:90vh; overflow-y:scroll;">
+            <div id="map_canvas" class="col-sm-9" style="height:90vh; background-color: #f5f5f5;"></div>
+            <div id="check" class="col-sm-3 sidenav" style="height:90vh;">
 
                 <h4 class = "text-lg-left" style="margin-top: 1rem;">Filter out the required asset</h4>
                 <br>
                 <div class="input-group">
                     <input type="text" id="input" class="form-control" placeholder="Search For Asset....">
                     <div id="find" class="input-group-append">
-                      <button class="btn btn-secondary" type="button">
+                      <button class="btn btn-secondary" type="button" style="background-color:#1A86B1">
                         <i class="fa fa-search"></i>
                       </button>
                     </div>
                 </div>
                 <h4 id="title" class = "text-lg-left" style="margin-top: 1.2rem;">List of Assets</h4>
-                <ul id="list" class="list-group">
-                </ul>
+                <div style="overflow-y:scroll !important;height:70vh;">
+                    <ul id="list" class="list-group">
+                    </ul>
+                </div>
                 <div id="actionButton">
-                    <span id="apply"><button type="button" class="btn btn-dark">Apply</button></span>
+                    <span id="apply"><button type="button" class="btn btn-primary" style="background-color:#1A86B1">Apply</button></span>
                     <span id="reset"><button type="button" class="btn btn-danger">Reset</button></span>
                 </div>
                     

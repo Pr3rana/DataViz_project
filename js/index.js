@@ -1,6 +1,6 @@
 
 const locationArr = [];
-var newData,map,lat=0, long=0,locationCenter, myLatlng, markers={}, modal,riskData;
+var newData,map,lat=0, long=0,locationCenter, myLatlng, markers={}, modal;
 //fecth CSV data
 $(document).ready(function() {
     $.ajax({
@@ -67,9 +67,23 @@ function drawMap(newData,locationCenter){
           title: ttl,
           map: map
         });
-        //google.maps.event.addListener(marker, 'click', hello.bind(null,ttl));
+        google.maps.event.addListener(marker, 'click', showChart.bind(null,ttl));
       }
 };
+
+function showChart(ttl){
+  var clickedMarkerInfo = [];
+  for (let i = 0; i < newData.length; i++) {
+    var el2 = newData[i];
+    if (el2.reference==ttl) {
+      clickedMarkerInfo.push(el2);
+    }
+  }
+  var data = getRiskData(clickedMarkerInfo);
+  var riskData = data[0];
+  var minMax = data[1];
+  openModal(riskData,minMax,ttl);
+}
 //apply the filter
 function applyFilter(){
   var checkedArr = [], filteredCords=[];
@@ -92,7 +106,7 @@ function applyFilter(){
     }
   }
   var data = getRiskData(filteredCords);
-  riskData = data[0];
+  var riskData = data[0];
   var minMax = data[1];
   var newCenter = getLocationCenter(filteredCords);
   modal = document.getElementById('myModal').style.display = "none";
@@ -120,13 +134,21 @@ function getRiskData(filteredCords) {
     riskDataObj[key] = [];
     for(let value in element){
       if(value != "reference" && value!="latitude" && value != "longitude"){
-          let riskPercentage = (element[value]/1)*100;
-          allVal.push(riskPercentage)
+          let displayValue = (element[value])
+          allVal.push(element[value])
           category.push({"label":value});
-          data.push({"value":riskPercentage});
+          data.push({"value":element[value]});
       }
     }
+    // let ratio = Math.max(...allVal) / 100;
+    // for(let j=0; j<data.length;j++){
+    //   console.log(data[i],"data");
+    //   let val = data[j].displayValue;
+    //   let normVal = Math.round( val / ratio );
+    //   data[j].value =normVal;
+    // }
     var jsonObj = {"category":category,"data":data};
+    console.log(jsonObj,"json");
     riskDataObj[key].push(jsonObj)
     let min = Math.min(...allVal);
     let max = Math.max(...allVal);
@@ -163,6 +185,7 @@ function startBounce(filteredCords,newCenter,riskData,minMax) {
 }
 //open modal for rendering chats
 function openModal(riskData,minMax,title) {
+  //console.log(riskData);
   modal = document.getElementById('myModal');
   var close = document.getElementById("close");
 
@@ -186,27 +209,21 @@ function openModal(riskData,minMax,title) {
   }
 }
 function renderChart(title,riskData,min,max,avg){
-  console.log(riskData,title,min,max,avg,"renderData")
+  let newMin = min - avg;
   var dataSrc = {
     "caption": "Risk data for "+ title,
     "xAxisName": title,
     "yAxisName": "Risk probability",
-    "numberSuffix": "%",
+    //"numberSuffix": "%",
+    "numVisiblePlot":"12",
+    //"palettecolors":"#5E8DDC",
     //"exportEnabled":"1",
     "decimals":"8",
-    "yAxisMinvalue":min,
+    "yAxisMinvalue":newMin,
     "yAxisMaxvalue":max,
     "plotToolText": "timestamp: $label <br> Risk: $dataValue",
     "theme": "fusion",
 };
-  if(min === max){
-    dataSrc.yAxisMinvalue = min - avg;
-    dataSrc.yAxisMaxvalue = max + avg;
-  }
-  else{
-    dataSrc.yAxisMinvalue = min;
-    dataSrc.yAxisMaxvalue = max;
-  }
   var chartInstance = new FusionCharts({
     type: 'scrollcolumn2d',
     width: "100%", // Width of the chart
