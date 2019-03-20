@@ -39,4 +39,4 @@ Open [http://localhost:8080/](http://localhost:8080) to view it in the browser.
 2) Here I have used scrolled column chart so that any huge data can get visualize in a better manner.
 3) The minimum value of y-axis for the chart is less than 0 so that any plot having value 0 can also get visualize to the user. It's totally optional. 
 
-P.S. There is a `Reset` button as well to bring back the application to its original state any time.
+P.S. There is a `Reset` button as well to bring back the application to its original state at any ponit of time.
