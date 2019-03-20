@@ -113,34 +113,33 @@ function showChart(ttl) {
 }
 //apply the filter
 function applyFilter() {
-    var checkedArr = [],
-        filteredCords = [];
-    document.querySelectorAll('.container').forEach(el => {
-        if (el.children[0].checked) {
-            checkedArr.push(el.children[1].innerText);
-        }
-    })
-    if (checkedArr.length == 0) {
-        alert("No asset has been selected!");
-        return;
-    }
-    for (let i = 0; i < checkedArr.length; i++) {
-        var el1 = checkedArr[i];
-        for (let j = 0; j < newData.length; j++) {
-            var el2 = newData[j];
-            if (el2.reference == el1) {
-                filteredCords.push(el2);
-            }
-        }
-    }
-    var data = getRiskData(filteredCords);
-    var riskData = data[0];
-    var minMax = data[1];
-    var newCenter = getLocationCenter(filteredCords);
-    modal = document.getElementById('myModal').style.display = "none";
-    startBounce(filteredCords, newCenter, riskData, minMax);
+  var checkedArr = [],
+      filteredCords = [];
+  document.querySelectorAll('.container').forEach(el => {
+      if (el.children[0].checked) {
+          checkedArr.push(el.children[1].innerText);
+      }
+  })
+  if (checkedArr.length == 0) {
+      alert("No asset has been selected!");
+      return;
+  }
+  for (let i = 0; i < checkedArr.length; i++) {
+      var el1 = checkedArr[i];
+      for (let j = 0; j < newData.length; j++) {
+          var el2 = newData[j];
+          if (el2.reference == el1) {
+              filteredCords.push(el2);
+          }
+      }
+  }
+  var data = getRiskData(filteredCords);
+  var riskData = data[0];
+  var minMax = data[1];
+  var newCenter = getLocationCenter(filteredCords);
+  modal = document.getElementById('myModal').style.display = "none";
+  highLight(filteredCords, newCenter, riskData, minMax);
 }
-
 //get risk data
 function getRiskData(filteredCords) {
     var riskDataObj = {},
@@ -205,18 +204,17 @@ function getNormalizeVal(allVal, category, data) {
     return normData;
 };
 //highlight filtered markers
-function startBounce(filteredCords, newCenter, riskData, minMax) {
+function highLight(filteredCords, newCenter, riskData, minMax) {
     map = new google.maps.Map(document.getElementById('map_canvas'), {
         zoom: 12,
         center: new google.maps.LatLng(newCenter[0], newCenter[1]),
         mapTypeId: google.maps.MapTypeId.SATELLITE
     });
     for (let i = 0; i < filteredCords.length; i++) {
-        var lat = filteredCords[i].latitude;
-        var long = filteredCords[i].longitude;
-        var title = filteredCords[i].reference;
+        var lat = filteredCords[i].latitude,
+         long = filteredCords[i].longitude,
+         title = filteredCords[i].reference;
         marker = new google.maps.Marker({
-            animation: google.maps.Animation.BOUNCE,
             position: new google.maps.LatLng(lat, long),
             icon: {
                 url: "./assets/placeholder.png"
@@ -293,35 +291,6 @@ function renderChart(title, riskData, min, max, avg) {
     chartInstance.render();
 }
 
-//apply the filter
-function applyFilter() {
-    var checkedArr = [],
-        filteredCords = [];
-    document.querySelectorAll('.container').forEach(el => {
-        if (el.children[0].checked) {
-            checkedArr.push(el.children[1].innerText);
-        }
-    })
-    if (checkedArr.length == 0) {
-        alert("No asset has been selected!");
-        return;
-    }
-    for (let i = 0; i < checkedArr.length; i++) {
-        var el1 = checkedArr[i];
-        for (let j = 0; j < newData.length; j++) {
-            var el2 = newData[j];
-            if (el2.reference == el1) {
-                filteredCords.push(el2);
-            }
-        }
-    }
-    var data = getRiskData(filteredCords);
-    var riskData = data[0];
-    var minMax = data[1];
-    var newCenter = getLocationCenter(filteredCords);
-    modal = document.getElementById('myModal').style.display = "none";
-    startBounce(filteredCords, newCenter, riskData, minMax);
-}
 //remove existing filter
 function removeFilter() {
     document.querySelectorAll('.container').forEach(el => {
