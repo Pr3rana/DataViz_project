@@ -258,8 +258,8 @@ function renderChart(title, riskData, min, max, avg) {
     let newMin = min - avg / 2;
     var dataSrc = {
         "caption": "Risk data for " + title,
-        "xAxisName": title,
-        "yAxisName": "Normalize Risk Probability",
+        "xAxisName": "Time",
+        "yAxisName": "Risk Probability",
         "numVisiblePlot": "12",
         "decimals": "8",
         "yAxisMinvalue": newMin,
