@@ -1,7 +1,7 @@
 const locationArr = [];
 var newData, map, lat = 0,
     long = 0,
-    locationCenter, myLatlng, markers = {},
+    locationCenter, myLatlng, markers1 = {}, markers2 = {},
     modal;
 //fecth CSV data
 $(document).ready(function() {
@@ -30,6 +30,7 @@ function addList(newData) {
         let txt = newData[i].reference;
         let containerDiv = document.createElement("div");
         containerDiv.setAttribute("class", "container list-group-item list-group-item-action list-group-item-light col-sm-12");
+        containerDiv.addEventListener("click",triggerMarkerClick);
         let input = document.createElement("input");
         input.setAttribute("type", "checkbox");
         input.setAttribute("class", "checkbox");
@@ -82,63 +83,48 @@ function drawMap(newData, locationCenter) {
         center: new google.maps.LatLng(lat, long),
         mapTypeId: google.maps.MapTypeId.SATELLITE
     });
-
     var infowindow = new google.maps.InfoWindow();
-    var marker, i;
+    let marker, i;
     for (i = 0; i < newData.length; i++) {
-        let ttl = newData[i].reference,
-            num = (i + 1) + "";
+        let title = newData[i].reference;
         myLatlng = new google.maps.LatLng(newData[i].latitude, newData[i].longitude);
         marker = new google.maps.Marker({
             position: myLatlng,
-            title: ttl,
             map: map
         });
-        google.maps.event.addListener(marker, 'click', showChart.bind(null, ttl));
+        markers1[title] = marker;
+        google.maps.event.addListener(marker, 'click', showChart.bind(null, title));
+        google.maps.event.addListener(marker, 'mouseover', (function (marker, title) {
+
+          return function () {
+              infowindow.setContent('<h6>'+title+'</h6>' + '<h7>Click to render map</h7>');
+              infowindow.open(map, marker);	
+          }
+      })(marker, title));
+      google.maps.event.addListener(marker, 'dblclick', (function (marker, title) {
+
+        return function () {
+            infowindow.setContent(title);
+            infowindow.open(map, marker);
+            map.setCenter(marker.getPosition());
+            map.setZoom(22);
+        }
+      })(marker, title));
     }
 };
 //show chart when red marker got clicked
-function showChart(ttl) {
+function showChart(title) {
     var clickedMarkerInfo = [];
     for (let i = 0; i < newData.length; i++) {
         var el2 = newData[i];
-        if (el2.reference == ttl) {
+        if (el2.reference == title) {
             clickedMarkerInfo.push(el2);
         }
     }
     var data = getRiskData(clickedMarkerInfo);
     var riskData = data[0];
     var minMax = data[1];
-    openModal(riskData, minMax, ttl);
-}
-//apply the filter
-function applyFilter() {
-  var checkedArr = [],
-      filteredCords = [];
-  document.querySelectorAll('.container').forEach(el => {
-      if (el.children[0].checked) {
-          checkedArr.push(el.children[1].innerText);
-      }
-  })
-  if (checkedArr.length == 0) {
-      alert("No asset has been selected!");
-      return;
-  }
-  for (let i = 0; i < checkedArr.length; i++) {
-      var el1 = checkedArr[i];
-      for (let j = 0; j < newData.length; j++) {
-          var el2 = newData[j];
-          if (el2.reference == el1) {
-              filteredCords.push(el2);
-          }
-      }
-  }
-  var data = getRiskData(filteredCords);
-  var riskData = data[0];
-  var minMax = data[1];
-  var newCenter = getLocationCenter(filteredCords);
-  modal = document.getElementById('myModal').style.display = "none";
-  highLight(filteredCords, newCenter, riskData, minMax);
+    openModal(riskData, minMax, title);
 }
 //get risk data
 function getRiskData(filteredCords) {
@@ -210,19 +196,37 @@ function highLight(filteredCords, newCenter, riskData, minMax) {
         center: new google.maps.LatLng(newCenter[0], newCenter[1]),
         mapTypeId: google.maps.MapTypeId.SATELLITE
     });
+    var infowindow = new google.maps.InfoWindow();
     for (let i = 0; i < filteredCords.length; i++) {
         var lat = filteredCords[i].latitude,
          long = filteredCords[i].longitude,
-         title = filteredCords[i].reference;
-        marker = new google.maps.Marker({
-            position: new google.maps.LatLng(lat, long),
+         title = filteredCords[i].reference,
+         myLatlng = new google.maps.LatLng(lat, long);
+         marker = new google.maps.Marker({
+            position: myLatlng,
             icon: {
                 url: "./assets/placeholder.png"
             },
-            title: title,
             map: map
         });
+        markers2[title] = marker;
         window.google.maps.event.addListener(marker, 'click', openModal.bind(null, riskData, minMax, title));
+        google.maps.event.addListener(marker, 'mouseover', (function (marker, title) {
+
+          return function () {
+              infowindow.setContent('<h6>'+title+'</h6>' + '<h7>Click to render map</h7>');
+              infowindow.open(map, marker);	
+          }
+      })(marker, title));
+      google.maps.event.addListener(marker, 'dblclick', (function (marker, title) {
+
+        return function () {
+            infowindow.setContent(title);
+            infowindow.open(map, marker);
+            map.setCenter(marker.getPosition());
+            map.setZoom(22);
+        }
+      })(marker, title));
     }
 }
 //open modal for rendering chats
@@ -254,8 +258,8 @@ function renderChart(title, riskData, min, max, avg) {
     let newMin = min - avg / 2;
     var dataSrc = {
         "caption": "Risk data for " + title,
-        "xAxisName": title,
-        "yAxisName": "Normalize Risk Probability",
+        "xAxisName": "Time",
+        "yAxisName": "Risk Probability",
         "numVisiblePlot": "12",
         "decimals": "8",
         "yAxisMinvalue": newMin,
@@ -291,6 +295,39 @@ function renderChart(title, riskData, min, max, avg) {
     chartInstance.render();
 }
 
+//apply the filter
+function applyFilter() {
+  var checkedArr = [],
+      filteredCords = [];
+      
+      console.log(this);
+  document.querySelectorAll('.container').forEach(el => {
+      if (el.children[0].checked) {
+          checkedArr.push(el.children[1].innerText);
+      }
+  })
+  if (checkedArr.length == 0) {
+      alert("No asset has been selected!");
+      return;
+  }
+  for (let i = 0; i < checkedArr.length; i++) {
+      var el1 = checkedArr[i];
+      for (let j = 0; j < newData.length; j++) {
+          var el2 = newData[j];
+          if (el2.reference == el1) {
+              filteredCords.push(el2);
+          }
+      }
+  }
+  this.setAttribute("class","active");
+  var data = getRiskData(filteredCords);
+  var riskData = data[0];
+  var minMax = data[1];
+  var newCenter = getLocationCenter(filteredCords);
+  modal = document.getElementById('myModal').style.display = "none";
+  highLight(filteredCords, newCenter, riskData, minMax);
+}
+
 //remove existing filter
 function removeFilter() {
     document.querySelectorAll('.container').forEach(el => {
@@ -298,6 +335,8 @@ function removeFilter() {
             el.children[0].checked = false;
         }
     })
+    markers1 = {};
+    document.getElementById("apply").classList.remove("active");
     document.getElementById("input").value = "";
     search();
     modal = document.getElementById('myModal').style.display = "none";
@@ -322,8 +361,38 @@ function search() {
         }
     }
 }
+function triggerMarkerClick(e){
+  let label, key;
+  let checkbox = e.target.getElementsByTagName("input")[0];
+  if(e.target.tagName != "INPUT" && checkbox.checked){
+    label = e.target.getElementsByTagName("label")[0];
+    key = label.textContent || label.innerText;
+    google.maps.event.trigger(markers2[key], 'dblclick');
+  }
+  else if(e.target.tagName != "INPUT" && checkbox.checked == false){
+    if(document.querySelectorAll('.active').length > 0){
+        removeFilter();
+        setTimeout(() => {
+            label = e.target.getElementsByTagName("label")[0];
+            key = label.textContent || label.innerText;
+            google.maps.event.trigger(markers1[key], 'dblclick');
+        },0);
+    }
+    else{
+        label = e.target.getElementsByTagName("label")[0];
+        key = label.textContent || label.innerText;
+        google.maps.event.trigger(markers1[key], 'dblclick');
+    }
+    
+  }
+  else{
+      console.log("Something went wrong!");
+      return;
+  }
+}
 //add listner to required elements
 document.getElementById("apply").addEventListener('click', applyFilter);
 document.getElementById("reset").addEventListener('click', removeFilter);
 document.getElementById("input").addEventListener("keyup", search);
 document.getElementById("find").addEventListener("click", search);
+  
