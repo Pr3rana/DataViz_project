@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script src="/js/lib/jquery/jquery-3.3.1.min.js"></script>
+    <script src="js/lib/jquery/jquery.csv.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="js/lib/fusioncharts/fusioncharts.js"></script>
+    <script type="text/javascript" src="js/lib/fusioncharts/fusioncharts.theme.fusion.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Document</title>
+</head>
+<body>
+    <main class="container-fluid">
+        <div class="row content">
+            <div class="col-sm-12" style="height:10vh; background-color: #00418E">
+                <h2 class = "text-lg-left" style="margin-top: 1.2rem; color: #ffffff;">Data Visualization</h2>
+            </div>
+            <div id="map_canvas" class="col-sm-9" style="height:90vh; background-color: #f5f5f5;"></div>
+            <div id="check" class="col-sm-3 sidenav" style="height:90vh;">
+
+                <h4 class = "text-lg-left" style="margin-top: 1rem;">Filter out the required asset</h4>
+                <br>
+                <div class="input-group">
+                    <input type="text" id="input" class="form-control" placeholder="Search For Asset....">
+                    <div id="find" class="input-group-append">
+                      <button class="btn btn-secondary" type="button" style="background-color:#1A86B1">
+                        <i class="fa fa-search"></i>
+                      </button>
+                    </div>
+                </div>
+                <h4 id="title" class = "text-lg-left" style="margin-top: 1.2rem;">List of Assets</h4>
+                <div style="overflow-y:scroll !important;height:70vh;">
+                    <ul id="list" class="list-group">
+                    </ul>
+                    <div id ="sadFace" class = "text-lg-center" style="display: none;">No match found :(</div>
+                </div>
+                <div id="actionButton">
+                    <span id="apply"><button type="button" class="btn btn-primary" style="background-color:#1A86B1">Apply</button></span>
+                    <span id="reset"><button type="button" class="btn btn-danger">Reset</button></span>
+                </div>
+                    
+            </div>
+        </div>
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="chart-container">FusionCharts XT will load here!</div>
+                </div>
+            </div>
+        </div>  
+    </main>
+    <script src="/js/index.js"></script>
+</body>
+</html>
